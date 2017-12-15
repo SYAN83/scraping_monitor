@@ -8,12 +8,12 @@ from utils import insert_stats, get_counts
 template_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=template_dir)
 
-hours = 72
+hours = 168
 
 
 @app.route("/")
 def index():
-    cols, rows = insert_stats(hours=hours, window=6)
+    cols, rows = insert_stats(hours=hours, window=12)
     total_counts = list(map(list, get_counts(hours=24).items()))
     total_counts.insert(0, ['Website', 'Counts'])
     return render_template('charts.html',
