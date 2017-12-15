@@ -1,0 +1,6 @@
+mongo_readonly:
+    host:
+    port:
+    database:
+    username:
+    password:

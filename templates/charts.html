@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <div id="chart_div"></div>
+  <div id="piechart" style="width: 900px; height: 450px;"></div>
+
+
+  <script type='text/javascript'>//<![CDATA[
+
+  google.charts.load('current', {packages: ['corechart', 'bar']});
+  google.charts.setOnLoadCallback(drawBasic);
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawBasic() {
+
+    var data = new google.visualization.DataTable();
+    data.addColumn('datetime', 'Time of Day');
+    {%- for col in cols %}
+    data.addColumn('number', '{{ col }}');
+    {%- endfor %}
+
+    data.addRows([
+      {%- for dt, num in rows %}
+      [new Date(...{{ dt }}), ...{{ num }}],
+      {%- endfor %}
+    ]);
+
+    var options = {
+      title: 'Web Scraping History in the Past {{ h }} Hours',
+      isStacked: true,
+      hAxis: {
+        title: 'Time of Day'
+      },
+      vAxis: {
+        title: 'Number of items scripted'
+      },
+      'width':'100%',
+      'height':400
+    };
+
+    var chart = new google.visualization.ColumnChart(
+      document.getElementById('chart_div'));
+
+    chart.draw(data, options);
+  };
+
+  function drawChart() {
+
+        var data = google.visualization.arrayToDataTable({{ counts|safe }});
+
+        var options = {
+          title: 'Total Items Scraped in the Past 24 Hours'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+
+  //]]>
+
+  </script>
+ 
+ 
+{% endblock %}
