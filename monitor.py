@@ -14,7 +14,7 @@ hours = 168
 @app.route("/")
 def index():
     cols, rows = insert_stats(hours=hours, window=12)
-    total_counts = list(map(list, get_counts(hours=24).items()))
+    total_counts = sorted(list(map(list, get_counts(hours=24).items())))
     total_counts.insert(0, ['Website', 'Counts'])
     return render_template('charts.html',
                            cols=cols,

@@ -175,6 +175,7 @@ def insert_stats(hours=72, window=3, exclude=[]):
                                      window=window)
             for dt, count in inserts:
                 rows[dt][collection] = count
+    cols.sort()
     rows = sorted(list(map(partial(format_rows, cols), rows.items())))
     return cols, rows
 
