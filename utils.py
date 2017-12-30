@@ -148,7 +148,7 @@ def hourly_inserts(db, collection, hours=72, window=3):
                       hours=hours,
                       projection={'_id': 0, 'timestamp': 1}):
         d = epoch_converter(dt['timestamp'])
-        counter[(d.year, d.month, d.day, d.hour//window*window)] += 1
+        counter[(d.year, d.month-1, d.day, d.hour//window*window)] += 1
     return counter.items()
 
 
@@ -195,4 +195,4 @@ def get_counts(hours=24, exclude=[]):
 
 
 if __name__ == '__main__':
-    print(get_counts())
+    print(insert_stats(hours=48, window=12))
