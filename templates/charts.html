@@ -3,34 +3,50 @@
 
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-  <!--<div id="column_chart"></div>-->
-  <table style="width:100%">
-    <col width="50%">
-    <col width="50%">
-    <tr>
-      <td colspan="2" align="center"><h5><br>Web Scraping History in the Past 7 Days</h5></td>
-    </tr>
-    <tr>
-      <td colspan="2"><div id="column_chart"></div></td>
-    </tr>
-    <tr>
-      <td colspan="2" align="center"><h5><br>Total Items Scraped in the Past 24 Hours</h5></td>
-    </tr>
-    <tr>
-      <td align="center"><div id="table_div"></div></td>
-      <td align="center"><div id="pie_chart"></div></td>
-    </tr>
-  </table>
+  <div class="col-md-10 offset-md-1">
+    <div class="row text-div">
+      <h4>Web Scraping History in the Past 7 Days</h4>
+    </div>
+    <div class="row">
+      <div class="col-md-12 chart-div" id="column_chart"></div>
+    </div>
+    <div class="row text-div">
+      <h4>Total Items Scraped in the Past 24 Hours</h4>
+    </div>
+    <div class="row">
+      <div class="col-md-6 chart-div" id="table_div"></div>
+      <div class="col-md-6 chart-div" id="pie_chart"></div>
+    </div>
+  </div>
 
+
+  <!--<div id="column_chart"></div>-->
+  <!--<table style="width:100%">-->
+    <!--<col width="50%">-->
+    <!--<col width="50%">-->
+    <!--<tr>-->
+      <!--<td colspan="2" align="center"><h5><br>Web Scraping History in the Past 7 Days</h5></td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+      <!--<td colspan="2"><div id="column_chart"></div></td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+      <!--<td colspan="2" align="center"><h5><br>Total Items Scraped in the Past 24 Hours</h5></td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+      <!--<td align="center"><div id="table_div"></div></td>-->
+      <!--<td align="center"><div id="pie_chart"></div></td>-->
+    <!--</tr>-->
+  <!--</table>-->
 
   <script type='text/javascript'>//<![CDATA[
 
   google.charts.load('current', {packages: ['corechart', 'bar', 'table']});
-  google.charts.setOnLoadCallback(drawBasic);
-  google.charts.setOnLoadCallback(drawChart);
-  google.charts.setOnLoadCallback(drawTable);
+  google.charts.setOnLoadCallback(drawColumnChart);
+  google.charts.setOnLoadCallback(drawCombo);
+  <!--google.charts.setOnLoadCallback(drawTable);-->
 
-  function drawBasic() {
+  function drawColumnChart() {
 
     var data = new google.visualization.DataTable();
     data.addColumn('datetime', 'Time of Day');
@@ -56,45 +72,48 @@
       'height':300
     };
 
-    var chart = new google.visualization.ColumnChart(document.getElementById('column_chart'));
+    var column = new google.visualization.ColumnChart(document.getElementById('column_chart'));
 
-    chart.draw(data, options);
+    column.draw(data, options);
   };
 
-  function drawChart() {
+  function drawCombo() {
 
     var data = google.visualization.arrayToDataTable({{ counts|safe }});
+
+    var options = {
+      title: 'Total Items Scraped in the Past 24 Hours',
+      'width': '80%',
+      sortColumn: 1,
+      sortAscending: false,
+      showRowNumber: true
+    };
+
+    var table = new google.visualization.Table(document.getElementById('table_div'));
+    table.draw(data, options);
 
     var options = {
       'width': '90%',
       'height':300
     };
 
-    var chart = new google.visualization.PieChart(document.getElementById('pie_chart'));
+    var pie = new google.visualization.PieChart(document.getElementById('pie_chart'));
+    pie.draw(data, options);
 
-    chart.draw(data, options);
+    // When the table is selected, update the orgchart.
+    google.visualization.events.addListener(table, 'select', function() {
+      pie.setSelection(table.getSelection());
+    });
+
+    // When the orgchart is selected, update the table chart.
+    google.visualization.events.addListener(pie, 'select', function() {
+      table.setSelection(pie.getSelection());
+    });
   };
-
-  function drawTable() {
-
-    var data = google.visualization.arrayToDataTable({{ counts|safe }});
-
-    var table = new google.visualization.Table(document.getElementById('table_div'));
-
-    var options = {
-      title: 'Total Items Scraped in the Past 24 Hours',
-      'width': '75%',
-      sortColumn: 1,
-      sortAscending: false,
-      showRowNumber: true
-    };
-
-    table.draw(data, options);
-  }
 
   //]]>
 
   </script>
- 
+
  
 {% endblock %}
